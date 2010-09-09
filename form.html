@@ -39,6 +39,17 @@
             background-color: #eee;
         }
         
+        .ctrlHolder {
+            position: relative;
+        }
+        
+        .delete {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 10px;
+        }
+        
         
     </style>
     <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
@@ -79,10 +90,12 @@
             if ($(this).is('.active')) {
                 $(this).removeClass('active');
                 $('#menu').hide();
+                $('.delete').remove();
             } else {
                 $('.ctrlHolder').removeClass('active');
                 $(this).addClass('active');
                 showMenu(this);
+                $(this).append('<a href="#" class="delete">Delete</a>');
             }
         });
 
@@ -91,8 +104,15 @@
 
         $('#save-html').live('click', function() {
             var form_html = $('#previewFormHolder').html();
-            alert(form_html);
             $.post('#', {'data': form_html});
+        });
+
+        $('.delete').live('click', function() {
+            if (confirm('Are you sure you want to delete this field?')) {
+                $('#menu').hide();
+                $(this).parent().remove();
+            }
+            
         });
         
         $('.uniForm').validate();
