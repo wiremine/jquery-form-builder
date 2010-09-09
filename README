@@ -1,0 +1,3 @@
+A prototype tool that enables one to create a form via a browser. 
+
+Currently it lets you add text fields, text areas, selects, checkboxes and radio buttons. It also lets you sort. However, you can't delete or edit, so it's not much good. 

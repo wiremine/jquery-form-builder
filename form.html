@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-us" lang="en-us">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <link type="text/css" href="css/uni-form.css" rel="Stylesheet" />
+    <link type="text/css" href="css/default.uni-form.css" rel="Stylesheet" />
+    <link type="text/css" href="css/hot-sneaks/jquery-ui-1.8.4.custom.css" rel="Stylesheet" />	
+
+    <style type="text/css">
+        body {
+            margin: 0;
+            font-family: Verdana;
+            font-size: 12px;
+        }
+
+        #add-controls {
+            float: left;
+            width: 150px;
+            padding: 10px;
+            background-color: #ddd;
+        }
+
+        #form-builder {
+            float: left;
+            width: 600px;
+            padding: 10px;
+        }
+
+        #menu {
+            background-color: #eee;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            border-bottom: 1px solid #ccc;
+            width: 250px;
+            margin-bottom: 20px;
+        }
+        
+        .active {
+            background-color: #eee;
+        }
+        
+        
+    </style>
+    <script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.8.4.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery.inlineedit.js"></script>
+    <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+
+    <script type="text/javascript">
+    $(document).ready(function() {
+        var empty = true;
+
+        $('.addAction').click(function() {
+          var template = $(this).attr("id").replace(/^add/, '#template');
+          //alert(template);
+          // TODO: Give each new snippet a unique ID
+          if(empty) {
+            $('#previewFormHolder fieldset').html($(template).html());
+            empty = false;
+          } else {
+            $('#previewFormHolder fieldset').append($(template).html());
+          }
+        });
+
+        var showMenu = function(el) {
+          //get the position of the placeholder element
+          var pos = $(el).offset();  
+          var width = $(el).outerWidth() + 10;
+          //show the menu directly over the placeholder
+          $("#menu").css( { "left": (pos.left + width) + "px", "top":pos.top + "px" } );
+          $("#menu").show();
+        }
+
+        $('.uniForm fieldset').sortable({
+            start: function(event, ui) { $('#menu').hide(); },
+        });
+        
+        $('.ctrlHolder').live('click', function() {
+            if ($(this).is('.active')) {
+                $(this).removeClass('active');
+                $('#menu').hide();
+            } else {
+                $('.ctrlHolder').removeClass('active');
+                $(this).addClass('active');
+                showMenu(this);
+            }
+        });
+
+        $('.title').inlineEdit();
+        $('.description').inlineEdit({control: 'textarea'})
+
+        $('#save-html').live('click', function() {
+            var form_html = $('#previewFormHolder').html();
+            alert(form_html);
+            $.post('#', {'data': form_html});
+        });
+        
+        $('.uniForm').validate();
+
+    });
+    </script>
+</head>
+<div id="add-controls">
+    <ul>
+        <li>
+            <a href="javascript:void();" id="addTextInput" class="addAction">Add text input</a>
+        </li>
+        <li>
+            <a href="javascript:void();" id="addTextArea" class="addAction">Add text area</a>
+        </li>
+        <li>
+            <a href="javascript:void();" id="addSelect" class="addAction">Add select</a>
+        </li>
+        <li>
+            <a href="javascript:void();" id="addRadio" class="addAction">Add radio buttons</a>
+        </li>
+        <li>
+            <a href="javascript:void();" id="addCheckBox" class="addAction">Add checkboxes</a>
+        </li>
+    </ul>
+    
+    <a href="#" id="save-html">Save Form</a>
+</div>
+
+<div id="form-builder">
+    <div id="previewFormHolder">
+        <form action="#" class="uniForm">
+            <h2 class="title">Form Title. Click here to edit</h2>
+            <p class="description">Description here. Click here to edit</p>
+            <fieldset>
+                <div id="noFields">Add some fields</div>
+            </fieldset>
+            <input type="submit" value="Submit Form" />
+        </form>        
+    </div>
+</div>
+
+
+<div style="position: absolute; display: none;" id="menu">
+   <form action="#" class="">
+       <div> 
+         <label for="">Field Name</label> 
+         <input type="text" id="" name="" value="" size="35" class="textInput"/>  
+       </div>
+       <div> 
+         <label for="">User Hint</label><br /> 
+         <textarea name="" rows="3" cols="25"></textarea>
+       </div>
+       <div>
+           <input type="checkbox" name="required" /> Required?
+       </div>
+       <div style="border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px;">
+           Control-specific items here.
+        </div>
+   </form>
+</div>
+
+
+<div id="templates" style="display:none;">
+    
+    <div id="templateTextInput"> 
+        <div class="ctrlHolder"> 
+          <label for="">Text input</label> 
+          <input type="text" id="" name="" value="" size="35" class="textInput required"/> 
+          <p class="formHint">This is a form hint.</p> 
+        </div> 
+     </div>
+
+    <div id="templateTextArea">
+      <div class="ctrlHolder">
+        <label for=""><em>*</em> Textarea</label>
+        <textarea name="" id="" rows="25" cols="25"></textarea>
+        <p class="formHint">This is a form hint.</p>
+      </div>
+    </div>
+      
+    <div id="templateSelect">
+      <div class="ctrlHolder">
+        <label for="">Select</label>
+        <select name="" id="" class="selectInput">
+          <option value="">Option</option>
+          <option value="">Option</option>
+        </select>
+        <p class="formHint">This is a form hint.</p>
+      </div>
+    </div>
+    
+    <div id="templateRadio">
+        <div class="ctrlHolder">
+          <p class="label">
+            <em>*</em> Multifield with radios
+          </p>
+          <ul>
+            <li><label for=""><input id="" name="" value="" type="radio" checked="checked"/> Option</label></li>
+            <li><label for=""><input id="" name="" value="" type="radio"/> Option</label></li>
+          </ul>
+          <p class="formHint">This is a form hint.</p>
+        </div>
+    </div>
+    
+    <div id="templateCheckBox"> 
+        <div class="ctrlHolder"> 
+          <p class="label">Checkboxes</p> 
+          <ul class="blockLabels"> 
+            <li><label for=""><input type="checkbox" id="" name=""/> Option</label></li> 
+            <li><label for=""><input type="checkbox" id="" name=""/> Option</label></li> 
+            <li><label for=""><input type="checkbox" id="" name=""/> Option</label></li> 
+          </ul> 
+          <p class="formHint">This is a form hint.</p> 
+        </div> 
+     </div>
+
+</div>
+</html>
