@@ -56,20 +56,21 @@
     <script type="text/javascript" src="js/jquery-ui-1.8.4.custom.min.js"></script>
     <script type="text/javascript" src="js/jquery.inlineedit.js"></script>
     <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+    <script type="text/javascript" src="js/jquery.uuid.js"></script>
 
     <script type="text/javascript">
     $(document).ready(function() {
         var empty = true;
 
         $('.addAction').click(function() {
-          var template = $(this).attr("id").replace(/^add/, '#template');
-          //alert(template);
+          var template_tag = $(this).attr("id").replace(/^add/, '#template');
           // TODO: Give each new snippet a unique ID
+          var template = $(template_tag + " .ctrlHolder").clone().attr('id', $.uuid('fb'));
           if(empty) {
-            $('#previewFormHolder fieldset').html($(template).html());
+            $('#previewFormHolder fieldset').html(template).fadeIn();
             empty = false;
           } else {
-            $('#previewFormHolder fieldset').append($(template).html());
+            $('#previewFormHolder fieldset').append(template).fadeIn();
           }
         });
 
@@ -79,8 +80,23 @@
           var width = $(el).outerWidth() + 10;
           //show the menu directly over the placeholder
           $("#menu").css( { "left": (pos.left + width) + "px", "top":pos.top + "px" } );
+
+          var target_id = $(el).attr('id');
+
+          $('#field-name-edit').val($("#" + target_id + " label").text());
+          $('#field-name-edit').change(function() {
+              $("#" + target_id + " label").text($(this).val());
+          });
+
+          $('#user-tip-edit').val($("#" + target_id + " p.formHint").text());
+          $('#user-tip-edit').change(function() {
+              $("#" + target_id + " p.formHint").text($(this).val());
+          });
+
           $("#menu").show();
         }
+
+
 
         $('.uniForm fieldset').sortable({
             start: function(event, ui) { $('#menu').hide(); },
@@ -90,7 +106,7 @@
             if ($(this).is('.active')) {
                 $(this).removeClass('active');
                 $('#menu').hide();
-                $('.delete').remove();
+                $(this).remove('.delete');
             } else {
                 $('.ctrlHolder').removeClass('active');
                 $(this).addClass('active');
@@ -160,11 +176,11 @@
    <form action="#" class="">
        <div> 
          <label for="">Field Name</label> 
-         <input type="text" id="" name="" value="" size="35" class="textInput"/>  
+         <input type="text" id="field-name-edit" name="" value="" size="35" class="textInput"/>  
        </div>
        <div> 
          <label for="">User Hint</label><br /> 
-         <textarea name="" rows="3" cols="25"></textarea>
+         <textarea id="user-tip-edit" name="" rows="3" cols="25"></textarea>
        </div>
        <div>
            <input type="checkbox" name="required" /> Required?
